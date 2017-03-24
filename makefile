@@ -1,5 +1,5 @@
-all: pract1a.exe
-pract1a.exe: pract1a.obj
- tlink /v pract1a
-pract1a.obj: pract1a.asm 
- tasm /zi pract1a.asm
+all: pract2a.exe 
+pract2a.exe: pract2a.obj
+ tlink /v pract2a
+pract2a.obj: pract2a.asm 
+ tasm /zi pract2a.asm
