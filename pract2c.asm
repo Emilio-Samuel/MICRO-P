@@ -1,13 +1,16 @@
 ;**************************************************************************
-; SBM 2017. ESTRUCTURA B罶ICA DE UN PROGRAMA EN ENSAMBLADOR
+; SBM 2017. ESTRUCTURA B脕SICA DE UN PROGRAMA EN ENSAMBLADOR
 ;**************************************************************************
 ; DEFINICION DEL SEGMENTO DE DATOS
 DATOS SEGMENT
+NUMERO DB 17 ;; Numero de elementos a captrurar.
+ALMACENADO DB ?;;
 FILA1 DB 4,3,1,2 ;; Primera fila de la matriz
 FILA2 DB 1,2,4,3 ;; Segunda fila de la matriz
 FILA3 DB 3,1,2,4 ;; Tercera fila de la matriz
 FILA4 DB 2,4,3,1 ;; Cuarta fila de la matriz
 CONVERSION DB ?
+MENSAJE DB  "INTRODUZCA LAS FILAS DE LA MATRIZ(4)",13,10,'$'
 FILASOK DB  "Filas validas [SI].",'$'
 COLUMNASERR DB  "Columnas validas [NO]",13,10,'$'
 FILASERR DB  "Filas validas [NO].",'$'
@@ -18,12 +21,12 @@ DATOS ENDS
 ;**************************************************************************
 ; DEFINICION DEL SEGMENTO DE PILA
 PILA SEGMENT STACK "STACK"
-DB 40H DUP (0) ;ejemplo de inicializaci髇, 64 bytes inicializados a 0
+DB 40H DUP (0) ;ejemplo de inicializaci贸n, 64 bytes inicializados a 0
 PILA ENDS
 ;**************************************************************************
 ; DEFINICION DEL SEGMENTO EXTRA
 EXTRA SEGMENT
-RESULT DW 0,0 ;ejemplo de inicializaci髇. 2 PALABRAS (4 BYTES)
+RESULT DW 0,0 ;ejemplo de inicializaci贸n. 2 PALABRAS (4 BYTES)
 EXTRA ENDS
 ;**************************************************************************
 ; DEFINICION DEL SEGMENTO DE CODIGO
@@ -41,13 +44,17 @@ MOV ES, AX
 MOV SP, 64 ; CARGA EL PUNTERO DE PILA CON EL VALOR MAS ALTO
 ; FIN DE LAS INICIALIZACIONES
 ; COMIENZO DEL PROGRAMA
+CALL CAPTURAMATRIZ
+;;CAPTURAMOS EL NUEVO VECTOR
+
 MOV CX, 0
+;;PROCESO DE IMPRESION DEL VECTOR
 PROCESO:
 	ADD CX, 4 ;;INICIAMOS CX EN EL SIGUIENTE VECTOR 
 	;;;;;;;IMPRIMIMOS LOS CORCHETES;;;;;;;;;;;;;;;;;;;
-	mov AH, 2 ; N鷐ero de funci髇 = 2
+	mov AH, 2 ; N煤mero de funci贸n = 2
 	mov DL, '|' ; Se desea imprimir la letra A
-	int 21h ; Interrupci髇 software al sistema operativo 
+	int 21h ; Interrupci贸n software al sistema operativo 
 	MOV DI, CX ;;INICIALIZAMOS DI INDICE DEL VECTOR A 0 (RESPECTO AL VECTOR QUE MIRAMOS)
 	SUB DI, 4
 	;;;;;;;IMPRIMIMOS EL VECTOR;;;;;;;;;;;;;;;;;;;
@@ -61,9 +68,9 @@ PROCESO:
 		CMP DI, CX
 		JNE COMIENZO
 	;;;;;;;IMPRIMIMOS LOS CORCHETES;;;;;;;;;;;;;;;;;;;
-	mov AH, 2 ; N鷐ero de funci髇 = 2
+	mov AH, 2 ; N煤mero de funci贸n = 2
 	mov DL, '|' ; Se desea imprimir la letra A
-	int 21h ; Interrupci髇 software al sistema operativo
+	int 21h ; Interrupci贸n software al sistema operativo
 	MOV AH, 9
 	MOV DX, OFFSET DS:ESPACIO
 	INT 21H
@@ -206,7 +213,20 @@ DUPLICADOSCOLUMNAS PROC
 		RET
 DUPLICADOSCOLUMNAS ENDP	
 
-
+CAPTURAMATRIZ PROC
+	INICIOCAPTURA:
+		MOV AH, 9
+		MOV DX, OFFSET DS:MENSAJE
+		INT 21H
+	CAPTURA:;Funci贸n captura de teclado
+		MOV AH,0AH    		 
+		MOV DX,OFFSET DS:NUMERO      
+		INT 21H
+	RET
+CAPTURAMATRIZ ENDP
+		
+		
+	
 ; FIN DEL SEGMENTO DE CODIGO 
 CODE ENDS
 ; FIN DEL PROGRAMA INDICANDO DONDE COMIENZA LA EJECUCION
